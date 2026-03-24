@@ -50,7 +50,7 @@ REPORTS_DIR = Path(__file__).resolve().parents[1] / "reports"
 
 # Risk limits
 MAX_POSITION_PER_TICKER = 0.20  # 20%
-MAX_GROSS_LEVERAGE = 1.5
+MAX_GROSS_LEVERAGE = 1.0
 MIN_ROLLING_SHARPE = 0.3
 ANNUAL_RETURN_TARGET = 0.45  # 45% annualized
 TRAILING_RETURN_WINDOW = 252  # ~1 trading year
