@@ -791,11 +791,16 @@ def _compute_combined_positions(
             "abs_weight": abs(weighted_sum),
         }
 
-    # Return uncapped first, then apply risk limits for capped version
+    # Uncapped = raw weights normalized to 100% gross (no per-ticker cap)
     import copy
     uncapped = copy.deepcopy(combined)
+    gross = sum(p["abs_weight"] for p in uncapped.values())
+    if gross > 0:
+        for pos in uncapped.values():
+            pos["raw_weight"] /= gross
+            pos["abs_weight"] /= gross
 
-    # Apply risk limits to combined positions
+    # Capped = per-ticker cap + gross leverage cap (proportional scale-down)
     combined = _apply_risk_limits(combined)
 
     return combined, uncapped
@@ -1004,16 +1009,18 @@ def main() -> None:
     uncapped_df.to_csv(uncapped_path, index=False)
     logger.info("  Saved %s (%d rows)", uncapped_path, len(uncapped_df))
 
-    # uncapped per-strategy signals
+    # uncapped per-strategy signals (raw weights normalized to 100% per strategy)
     uncapped_signals_rows: List[Dict[str, Any]] = []
     for strategy_name, signals, prices in results_for_signals:
         positions = _extract_latest_positions(signals, prices)
+        strat_gross = sum(abs(p["raw_weight"]) for p in positions.values())
         for ticker, pos in positions.items():
+            w = pos["raw_weight"] / strat_gross if strat_gross > 0 else 0.0
             uncapped_signals_rows.append({
                 "date": today_str,
                 "ticker": ticker,
                 "signal": pos["direction"],
-                "weight": round(pos["raw_weight"], 6),
+                "weight": round(w, 6),
                 "strategy": strategy_name,
             })
     uncapped_signals_df = pd.DataFrame(uncapped_signals_rows)
