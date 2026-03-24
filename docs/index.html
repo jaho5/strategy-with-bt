@@ -89,10 +89,6 @@ tr:hover{background:#1c2128}
   <div class="loading">Loading signals...</div>
 </section>
 
-<section id="execution-section">
-  <h2>Execution Plan</h2>
-  <div class="loading">Loading execution data...</div>
-</section>
 
 <script>
 const $ = id => document.getElementById(id);
@@ -123,9 +119,10 @@ function renderPositions(rows) {
   const sec = $('positions-section');
   if (!rows.length) { sec.innerHTML = '<h2>Portfolio Positions</h2><div class="empty">No position data available</div>'; return; }
 
+  const lastDate = rows.reduce((m, r) => r.date > m ? r.date : m, '');
+  rows = rows.filter(r => r.date === lastDate);
   rows.sort((a, b) => Math.abs(parseFloat(b.target_weight)||0) - Math.abs(parseFloat(a.target_weight)||0));
   const maxW = Math.max(...rows.map(r => Math.abs(parseFloat(r.target_weight)||0)), 0.01);
-  const lastDate = rows.reduce((m, r) => r.date > m ? r.date : m, '');
   $('last-updated').textContent = 'Data as of ' + lastDate;
 
   let longs = 0, shorts = 0, flats = 0, gross = 0, net = 0;
@@ -241,7 +238,6 @@ async function init() {
   renderSignals(signals);
 
   const meta = state?.metadata || state || {};
-  renderExecution(meta.pending_orders || state?.pending_orders || []);
   renderRisk(meta.last_risk_messages || state?.last_risk_messages || []);
 
   if (!positions.length) $('last-updated').textContent = 'No data loaded';
