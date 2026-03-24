@@ -791,10 +791,14 @@ def _compute_combined_positions(
             "abs_weight": abs(weighted_sum),
         }
 
+    # Return uncapped first, then apply risk limits for capped version
+    import copy
+    uncapped = copy.deepcopy(combined)
+
     # Apply risk limits to combined positions
     combined = _apply_risk_limits(combined)
 
-    return combined
+    return combined, uncapped
 
 
 def _print_summary(
@@ -984,11 +988,42 @@ def main() -> None:
         (name, sigs, prices)
         for name, sigs, prices, _ in strategy_results
     ]
-    combined_positions = _compute_combined_positions(results_for_signals)
+    combined_positions, uncapped_positions = _compute_combined_positions(results_for_signals)
 
     # ---- Step 4: Save outputs ----
     logger.info("Step 4: Saving reports...")
     REPORTS_DIR.mkdir(parents=True, exist_ok=True)
+
+    # uncapped_positions.csv (raw weights before risk limits)
+    uncapped_df = _build_portfolio_positions_df(today_str, uncapped_positions)
+    uncapped_path = REPORTS_DIR / "uncapped_positions.csv"
+    if uncapped_path.exists():
+        existing = pd.read_csv(uncapped_path)
+        existing = existing[existing["date"] != today_str]
+        uncapped_df = pd.concat([existing, uncapped_df], ignore_index=True)
+    uncapped_df.to_csv(uncapped_path, index=False)
+    logger.info("  Saved %s (%d rows)", uncapped_path, len(uncapped_df))
+
+    # uncapped per-strategy signals
+    uncapped_signals_rows: List[Dict[str, Any]] = []
+    for strategy_name, signals, prices in results_for_signals:
+        positions = _extract_latest_positions(signals, prices)
+        for ticker, pos in positions.items():
+            uncapped_signals_rows.append({
+                "date": today_str,
+                "ticker": ticker,
+                "signal": pos["direction"],
+                "weight": round(pos["raw_weight"], 6),
+                "strategy": strategy_name,
+            })
+    uncapped_signals_df = pd.DataFrame(uncapped_signals_rows)
+    uncapped_signals_path = REPORTS_DIR / "uncapped_signals.csv"
+    if uncapped_signals_path.exists():
+        existing = pd.read_csv(uncapped_signals_path)
+        existing = existing[existing["date"] != today_str]
+        uncapped_signals_df = pd.concat([existing, uncapped_signals_df], ignore_index=True)
+    uncapped_signals_df.to_csv(uncapped_signals_path, index=False)
+    logger.info("  Saved %s (%d rows)", uncapped_signals_path, len(uncapped_signals_df))
 
     # daily_signals.csv
     daily_signals_df = _build_daily_signals_df(today_str, results_for_signals)

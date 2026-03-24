@@ -41,6 +41,8 @@ jobs:
           cp -f reports/portfolio_positions.csv docs/data/ 2>/dev/null || true
           cp -f reports/strategy_comparison.csv docs/data/ 2>/dev/null || true
           cp -f reports/positions_state.json docs/data/ 2>/dev/null || true
+          cp -f reports/uncapped_positions.csv docs/data/ 2>/dev/null || true
+          cp -f reports/uncapped_signals.csv docs/data/ 2>/dev/null || true
 
       - name: Commit and push
         run: |

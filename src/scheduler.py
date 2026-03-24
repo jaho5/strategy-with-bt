@@ -702,7 +702,7 @@ def daily_run() -> None:
             (name, sigs, prices)
             for name, sigs, prices, _ in strategy_results
         ]
-        combined_positions = _compute_combined_positions(results_for_signals)
+        combined_positions, _ = _compute_combined_positions(results_for_signals)
 
         # Build new_signals for PositionManager
         pm = PositionManager()
