@@ -1,0 +1,6 @@
+Strategy,Total PnL%,Ann. Return%,Sharpe,Sortino,Max DD%,WF OOS Sharpe,P(Ann>45%) MC,Bootstrap p,PASS/FAIL
+"InvVol Ensemble (top-4: Entropy Regularized, GARCH Vol, HMM Regime, Spectral Momentum)",161.82,22.24,2.738,4.767,10.2,2.315,0.0,0.0,FAIL
+"InvVol Ensemble (top-5: Entropy Regularized, GARCH Vol, HMM Regime, Spectral Momentum, Bayesian Changepoint)",136.09,19.63,2.494,4.184,9.7,2.012,0.0001,0.0,FAIL
+GARCH Vol (EGARCH/25%/adaptive),92.25,14.61,1.757,2.958,6.58,1.623,0.0,0.0,FAIL
+"InvVol Ensemble (top-3: Entropy Regularized, GARCH Vol, HMM Regime)",84.35,13.61,1.633,2.547,8.21,1.333,0.0,0.0002,FAIL
+"Entropy Reg. (g=0.3, l=0.01, eg=0.8, rb=3, eta=2.0)",34.16,6.32,0.755,1.068,9.06,0.26,0.0,0.0518,FAIL

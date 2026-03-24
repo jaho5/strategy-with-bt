@@ -1,0 +1,51 @@
+name: Daily Trading Signals
+
+on:
+  schedule:
+    - cron: '30 21 * * 1-5'  # 4:30 PM ET (EDT) / 5:30 PM ET (EST)
+  workflow_dispatch:  # Manual trigger
+
+permissions:
+  contents: write
+
+concurrency:
+  group: daily-signals
+  cancel-in-progress: true
+
+jobs:
+  generate-signals:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: astral-sh/setup-uv@v4
+        with:
+          version: "latest"
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+
+      - name: Install dependencies
+        run: uv sync
+
+      - name: Generate daily signals
+        run: uv run python -m src.automate
+
+      - name: Copy reports to docs/data
+        run: |
+          mkdir -p docs/data
+          cp -f reports/daily_signals.csv docs/data/ 2>/dev/null || true
+          cp -f reports/portfolio_positions.csv docs/data/ 2>/dev/null || true
+          cp -f reports/strategy_comparison.csv docs/data/ 2>/dev/null || true
+          cp -f reports/positions_state.json docs/data/ 2>/dev/null || true
+
+      - name: Commit and push
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add reports/ docs/data/
+          git diff --cached --quiet || git commit -m "Daily signals $(date -u +%Y-%m-%d)"
+          git push

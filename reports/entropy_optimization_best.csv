@@ -1,0 +1,4 @@
+gamma,lambda_base,eg_blend,rebalance_freq,eta0,rank,test_pnl_pct,test_sharpe,test_sortino,test_max_dd,test_mc_prob_above_target,test_mc_mean_terminal,test_mc_median_terminal,val_pnl_pct,val_sharpe,val_mc_prob_above_target,composite_score
+0.3,0.01,0.8,3,2.0,1,130.141,1.4586,2.1829,0.2234,0.9278,226591.47,219103.57,41.296,0.5436,0.5214,2.1458999999999997
+0.8,0.15,0.8,3,2.0,2,130.523,1.4613,2.1876,0.2235,0.9281,227026.26,219561.44,41.21,0.5427,0.5212,2.14485
+0.8,0.01,0.65,3,2.0,3,119.705,1.4897,2.2371,0.208,0.9211,214075.87,207883.06,39.486,0.5448,0.5064,2.098

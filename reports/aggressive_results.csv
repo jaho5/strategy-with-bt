@@ -1,0 +1,8 @@
+Strategy,Total PnL%,Ann. Return%,Sharpe,Sortino,Max DD%,WF OOS Sharpe,P(Ann>45%) MC,MC Target PnL%,Bootstrap p,PASS/FAIL
+Agg. InvVol Ensemble 2x (top-4),33413.83,236.35,2.548,4.307,50.85,1.888,0.9986,492.8,0.0,PASS
+Agg. InvVol Ensemble 2x (top-5),23592.81,212.87,2.278,3.697,51.44,1.656,0.9961,492.8,0.0,PASS
+Agg. InvVol Ensemble 2x (top-3),797.12,58.04,1.197,1.779,33.6,0.728,0.7001,492.8,0.0028,FAIL
+"GARCH Vol Aggressive (vol=40%, lev=4x, refit=5)",580.31,49.18,1.179,1.851,35.69,1.326,0.5371,492.8,0.0054,FAIL
+"Momentum Crash Hedge Aggressive (vol=30%, vol_win=42)",86.87,13.93,0.598,0.853,45.76,0.541,0.0197,492.8,0.0866,FAIL
+"Stochastic Control Conservative (g=3, lev=1.5, DD=20%)",65.89,11.14,0.912,1.32,18.07,1.577,0.0,492.8,0.0208,FAIL
+"Entropy Reg. Aggressive (g=0.1, eg=0.9, eta=3.0, rb=2)",25.74,4.89,0.311,0.429,33.39,-0.096,0.0004,492.8,0.2612,FAIL

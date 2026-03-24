@@ -1,0 +1,10 @@
+Combination,Total PnL%,Ann. Return%,Sharpe,Sortino,Max DD%,Win Rate%,P(PnL>45%) MC,Bootstrap p,WF OOS Sharpe
+Markowitz Max-Sharpe,772699.28,547.27,2.821,4.661,93.07,56.46,0.998,0.0,2.673
+Inverse-Vol Weighted,767.04,56.92,2.291,3.725,24.68,55.13,0.9994,0.0,1.646
+Equal Weight,1915.04,87.11,1.357,2.003,89.75,53.81,0.9196,0.0008,1.286
+EnsembleMeta (MW+Sharpe+MVO),25.57,4.87,0.514,0.727,23.59,52.24,0.2501,0.131,-0.405
+[Individual] Spectral Momentum,176645.63,375.8,1.856,2.908,99.98,46.94,0.8659,0.0,2.864
+[Individual] GARCH Vol,235.54,28.73,1.092,1.696,23.14,30.22,0.9792,0.0082,0.894
+[Individual] Entropy Regularized,60.9,10.43,0.734,1.05,19.62,54.3,0.6483,0.0532,0.752
+[Individual] HMM Regime,-93.2,-42.92,0.573,0.791,99.83,50.58,0.213,0.1022,0.47
+[Individual] Bayesian Changepoint,-55.01,-15.35,0.237,0.315,91.86,52.48,0.1947,0.2952,-0.474
