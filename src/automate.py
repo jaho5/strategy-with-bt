@@ -17,6 +17,7 @@ Usage:
 from __future__ import annotations
 
 import importlib
+import json
 import logging
 import sys
 import time
@@ -999,13 +1000,10 @@ def main() -> None:
     logger.info("Step 4: Saving reports...")
     REPORTS_DIR.mkdir(parents=True, exist_ok=True)
 
-    # uncapped_positions.csv (raw weights before risk limits)
+    # Each daily run creates new date-stamped files (no appending/updating)
+    # uncapped_positions_{date}.csv
     uncapped_df = _build_portfolio_positions_df(today_str, uncapped_positions)
-    uncapped_path = REPORTS_DIR / "uncapped_positions.csv"
-    if uncapped_path.exists():
-        existing = pd.read_csv(uncapped_path)
-        existing = existing[existing["date"] != today_str]
-        uncapped_df = pd.concat([existing, uncapped_df], ignore_index=True)
+    uncapped_path = REPORTS_DIR / f"uncapped_positions_{today_str}.csv"
     uncapped_df.to_csv(uncapped_path, index=False)
     logger.info("  Saved %s (%d rows)", uncapped_path, len(uncapped_df))
 
@@ -1024,41 +1022,27 @@ def main() -> None:
                 "strategy": strategy_name,
             })
     uncapped_signals_df = pd.DataFrame(uncapped_signals_rows)
-    uncapped_signals_path = REPORTS_DIR / "uncapped_signals.csv"
-    if uncapped_signals_path.exists():
-        existing = pd.read_csv(uncapped_signals_path)
-        existing = existing[existing["date"] != today_str]
-        uncapped_signals_df = pd.concat([existing, uncapped_signals_df], ignore_index=True)
+    uncapped_signals_path = REPORTS_DIR / f"uncapped_signals_{today_str}.csv"
     uncapped_signals_df.to_csv(uncapped_signals_path, index=False)
     logger.info("  Saved %s (%d rows)", uncapped_signals_path, len(uncapped_signals_df))
 
-    # daily_signals.csv
+    # daily_signals_{date}.csv
     daily_signals_df = _build_daily_signals_df(today_str, results_for_signals)
-    daily_signals_path = REPORTS_DIR / "daily_signals.csv"
-    # Append if file exists and today's date is not already present
-    if daily_signals_path.exists():
-        existing = pd.read_csv(daily_signals_path)
-        if today_str not in existing["date"].values:
-            daily_signals_df = pd.concat([existing, daily_signals_df], ignore_index=True)
-        else:
-            # Replace today's entries
-            existing = existing[existing["date"] != today_str]
-            daily_signals_df = pd.concat([existing, daily_signals_df], ignore_index=True)
+    daily_signals_path = REPORTS_DIR / f"daily_signals_{today_str}.csv"
     daily_signals_df.to_csv(daily_signals_path, index=False)
     logger.info("  Saved %s (%d rows)", daily_signals_path, len(daily_signals_df))
 
-    # portfolio_positions.csv
+    # portfolio_positions_{date}.csv
     positions_df = _build_portfolio_positions_df(today_str, combined_positions)
-    positions_path = REPORTS_DIR / "portfolio_positions.csv"
-    if positions_path.exists():
-        existing = pd.read_csv(positions_path)
-        if today_str not in existing["date"].values:
-            positions_df = pd.concat([existing, positions_df], ignore_index=True)
-        else:
-            existing = existing[existing["date"] != today_str]
-            positions_df = pd.concat([existing, positions_df], ignore_index=True)
+    positions_path = REPORTS_DIR / f"portfolio_positions_{today_str}.csv"
     positions_df.to_csv(positions_path, index=False)
     logger.info("  Saved %s (%d rows)", positions_path, len(positions_df))
+
+    # Write manifest so frontend knows which date file to load
+    manifest = {"latest_date": today_str}
+    manifest_path = REPORTS_DIR / "latest_date.json"
+    manifest_path.write_text(json.dumps(manifest))
+    logger.info("  Saved %s", manifest_path)
 
     # ---- Step 5: Print human-readable summary ----
     _print_summary(strategy_results, combined_positions, alerts)

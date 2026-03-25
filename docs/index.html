@@ -228,9 +228,16 @@ async function loadJSON(path) {
 }
 
 async function init() {
+  const manifest = await loadJSON('data/latest_date.json');
+  const date = manifest?.latest_date;
+  if (!date) {
+    $('last-updated').textContent = 'No data loaded';
+    return;
+  }
+
   const [positions, signals, state] = await Promise.all([
-    loadCSV('data/portfolio_positions.csv'),
-    loadCSV('data/daily_signals.csv'),
+    loadCSV(`data/portfolio_positions_${date}.csv`),
+    loadCSV(`data/daily_signals_${date}.csv`),
     loadJSON('data/positions_state.json')
   ]);
 
