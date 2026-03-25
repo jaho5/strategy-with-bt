@@ -184,10 +184,22 @@ async function loadCSV(path) {
   catch { return []; }
 }
 
+async function loadJSON(path) {
+  try { const r = await fetch(path); if (!r.ok) throw 0; return await r.json(); }
+  catch { return null; }
+}
+
 async function init() {
+  const manifest = await loadJSON('data/latest_date.json');
+  const date = manifest?.latest_date;
+  if (!date) {
+    $('last-updated').textContent = 'No data loaded';
+    return;
+  }
+
   const [positions, signals] = await Promise.all([
-    loadCSV('data/uncapped_positions.csv'),
-    loadCSV('data/uncapped_signals.csv')
+    loadCSV(`data/uncapped_positions_${date}.csv`),
+    loadCSV(`data/uncapped_signals_${date}.csv`)
   ]);
   renderPositions(positions);
   renderSignals(signals);
