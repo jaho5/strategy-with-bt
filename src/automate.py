@@ -1080,7 +1080,7 @@ def main() -> None:
 
     # If --execute flag is passed, mark orders as executed and update state
     if '--execute' in sys.argv:
-        pm.mark_executed(orders, execution_prices=latest_prices)
+        pm.update_positions(orders, execution_prices=latest_prices)
         logger.info("Positions updated after execution.")
 
     elapsed = time.perf_counter() - t_start

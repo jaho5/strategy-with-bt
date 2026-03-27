@@ -10,3 +10,7 @@ Thumbs.db
 .vscode/
 .idea/
 .pytest_cache/
+
+# Schwab API credentials & tokens
+.env
+schwab_token.json
